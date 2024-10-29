@@ -4,6 +4,25 @@ from PIL import Image
 import numpy as np
 import requests
 
+# Custom CSS to add light and beige tones
+st.markdown("""
+    <style>
+    .stApp {
+        background-color: #f5f5dc; /* light beige background */
+    }
+    .css-18e3th9 {  /* header color */
+        color: #4b3832;
+    }
+    .css-1d391kg {  /* button color */
+        background-color: #e1c699; /* light tan */
+        color: #4b3832;
+    }
+    .css-1f6l7sv {  /* text input background */
+        background-color: #faf0e6; /* linen color */
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # Streamlit app setup
 st.title("Outfit Color Matching App")
 st.write("Upload photos of your outfits to check if the colors match. If they don’t, we’ll suggest better combinations.")
@@ -12,9 +31,9 @@ st.write("Upload photos of your outfits to check if the colors match. If they do
 file1 = st.file_uploader("Upload the first outfit photo", type=["jpg", "jpeg", "png"])
 file2 = st.file_uploader("Upload the second outfit photo", type=["jpg", "jpeg", "png"])
 
-# User-selectable theme and mood for outfit suggestions
-theme = st.selectbox("Choose your outfit theme", ["Professional", "Casual", "Seasonal"])
-mood = st.selectbox("Choose your mood", ["Confident", "Relaxed", "Energetic", "Sophisticated"])
+# Expanded User-selectable theme and mood for outfit suggestions
+theme = st.selectbox("Choose your outfit theme", ["Professional", "Casual", "Seasonal", "Business Casual", "Smart Casual", "Formal", "Sporty", "Bohemian"])
+mood = st.selectbox("Choose your mood", ["Confident", "Relaxed", "Energetic", "Sophisticated", "Chill", "Bold", "Creative", "Minimalistic"])
 
 # Optional face photo for skin tone detection
 face_file = st.file_uploader("Upload a face photo (optional, for color suggestions based on skin tone)", type=["jpg", "jpeg", "png"])
@@ -101,16 +120,18 @@ if closet_files:
         closet_image = Image.open(closet_file)
         st.image(closet_image, width=100)
 
-# Expanded outfit database
+# Expanded outfit database with new themes and moods
 def outfit_suggestions(theme, mood, closet_items=None):
     # Sample outfit database
     style_recommendations = {
         ("Professional", "Confident"): ["Navy Blazer + Gray Slacks + White Shirt + Leather Shoes"],
         ("Casual", "Relaxed"): ["Beige Cardigan + Light Jeans + White Sneakers + Watch"],
         ("Seasonal", "Sophisticated"): ["Brown Coat + Dark Jeans + Scarf + Boots"],
-        ("Professional", "Energetic"): ["Blue Suit + White Shirt + Red Tie + Dress Shoes"],
-        ("Casual", "Energetic"): ["Bright Hoodie + Joggers + Sneakers + Baseball Cap"],
-        ("Seasonal", "Confident"): ["Trench Coat + Black Pants + Boots + Minimalist Jewelry"]
+        ("Business Casual", "Chill"): ["Khaki Pants + Polo Shirt + Loafers"],
+        ("Smart Casual", "Minimalistic"): ["Black Turtleneck + Gray Chinos + White Sneakers"],
+        ("Formal", "Bold"): ["Black Suit + Red Tie + Black Shoes"],
+        ("Sporty", "Energetic"): ["Athletic Top + Joggers + Running Shoes"],
+        ("Bohemian", "Creative"): ["Patterned Top + Loose Pants + Sandals + Layered Jewelry"]
     }
     
     # Basic suggestion based on theme and mood
