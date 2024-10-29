@@ -8,6 +8,10 @@ import requests
 st.title("Outfit Color Matching App")
 st.write("Upload photos of your outfits to check if the colors match. If they don’t, we’ll suggest better combinations.")
 
+# Original file upload inputs for primary outfit photos
+file1 = st.file_uploader("Upload the first outfit photo", type=["jpg", "jpeg", "png"])
+file2 = st.file_uploader("Upload the second outfit photo", type=["jpg", "jpeg", "png"])
+
 # User-selectable theme and mood for outfit suggestions
 theme = st.selectbox("Choose your outfit theme", ["Professional", "Casual", "Seasonal"])
 mood = st.selectbox("Choose your mood", ["Confident", "Relaxed", "Energetic", "Sophisticated"])
@@ -62,6 +66,33 @@ def display_color_palette(colors):
     st.write("Suggested Color Palette:")
     for color in colors:
         st.markdown(f"<div style='background-color: rgb{color}; height: 50px; width: 50px; display: inline-block; margin: 5px;'></div>", unsafe_allow_html=True)
+
+# Check if both primary outfit files were uploaded
+if file1 and file2:
+    image1 = Image.open(file1)
+    image2 = Image.open(file2)
+    st.image([image1, image2], caption=["Outfit 1", "Outfit 2"], width=300)
+    
+    image1_cv = cv2.cvtColor(np.array(image1), cv2.COLOR_RGB2BGR)
+    image2_cv = cv2.cvtColor(np.array(image2), cv2.COLOR_RGB2BGR)
+    
+    dominant_color1 = get_dominant_color(image1_cv)
+    dominant_color2 = get_dominant_color(image2_cv)
+    
+    match1, primary_color1, suggestions1 = check_color_match(dominant_color1)
+    match2, primary_color2, suggestions2 = check_color_match(dominant_color2)
+    
+    # Display color match results with palette preview
+    if match1 and match2:
+        st.success("✅ Both outfits have colors that match well for work!")
+    else:
+        if not match1:
+            st.error(f"❌ Outfit 1’s primary color ({primary_color1}) may not match well.")
+            display_color_palette(suggestions1)
+        
+        if not match2:
+            st.error(f"❌ Outfit 2’s primary color ({primary_color2}) may not match well.")
+            display_color_palette(suggestions2)
 
 # Virtual Fitting Room: Display uploaded closet items
 if closet_files:
