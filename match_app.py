@@ -5,10 +5,11 @@ import numpy as np
 
 # Streamlit app setup
 st.title("Outfit Color Matching App")
-st.write("Upload a photo of your outfit to check if the colors match. If they don’t, we’ll suggest better combinations.")
+st.write("Upload photos of your outfits to check if the colors match. If they don’t, we’ll suggest better combinations.")
 
 # File upload inputs
-file1 = st.file_uploader("Upload your outfit photo", type=["jpg", "jpeg", "png"])
+file1 = st.file_uploader("Upload the first outfit photo", type=["jpg", "jpeg", "png"])
+file2 = st.file_uploader("Upload the second outfit photo", type=["jpg", "jpeg", "png"])
 
 # Function to analyze primary color in an image
 def get_dominant_color(image, k=1):
@@ -54,25 +55,37 @@ def check_color_match(dominant_color):
     else:
         return False, primary_color, []
 
-# Check if a file was uploaded
-if file1:
-    # Load and display the image
-    image = Image.open(file1)
-    st.image(image, caption="Your Outfit", width=300)
+# Check if both files were uploaded
+if file1 and file2:
+    # Load and display the images
+    image1 = Image.open(file1)
+    image2 = Image.open(file2)
+    st.image([image1, image2], caption=["Outfit 1", "Outfit 2"], width=300)
     
-    # Convert the image to OpenCV format
-    image_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    # Convert images to OpenCV format
+    image1_cv = cv2.cvtColor(np.array(image1), cv2.COLOR_RGB2BGR)
+    image2_cv = cv2.cvtColor(np.array(image2), cv2.COLOR_RGB2BGR)
     
-    # Get the dominant color of the outfit
-    dominant_color = get_dominant_color(image_cv)
+    # Get the dominant color of each outfit
+    dominant_color1 = get_dominant_color(image1_cv)
+    dominant_color2 = get_dominant_color(image2_cv)
     
-    # Check if the color is harmonious and get suggestions
-    match, primary_color, suggestions = check_color_match(dominant_color)
+    # Check color harmony for each outfit
+    match1, primary_color1, suggestions1 = check_color_match(dominant_color1)
+    match2, primary_color2, suggestions2 = check_color_match(dominant_color2)
     
-    if match:
-        st.success(f"✅ Your outfit’s primary color ({primary_color}) matches well for work!")
+    # Display color match results
+    if match1 and match2:
+        st.success("✅ Both outfits have colors that match well for work!")
     else:
-        st.error(f"❌ Your outfit’s primary color ({primary_color}) may not match well.")
-        st.write("Consider these colors for a harmonious look:")
-        for suggestion in suggestions:
-            st.write(f"- {suggestion}")
+        if not match1:
+            st.error(f"❌ Outfit 1’s primary color ({primary_color1}) may not match well.")
+            st.write("Consider these colors for a harmonious look:")
+            for suggestion in suggestions1:
+                st.write(f"- {suggestion}")
+        
+        if not match2:
+            st.error(f"❌ Outfit 2’s primary color ({primary_color2}) may not match well.")
+            st.write("Consider these colors for a harmonious look:")
+            for suggestion in suggestions2:
+                st.write(f"- {suggestion}")
