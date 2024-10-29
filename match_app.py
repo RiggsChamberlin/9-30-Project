@@ -101,20 +101,30 @@ if closet_files:
         closet_image = Image.open(closet_file)
         st.image(closet_image, width=100)
 
-# Outfit Generator based on theme and mood
-def outfit_suggestions(theme, mood):
+# Expanded outfit database
+def outfit_suggestions(theme, mood, closet_items=None):
+    # Sample outfit database
     style_recommendations = {
-        ("Professional", "Confident"): ["Navy Blazer + Gray Slacks + White Shirt"],
-        ("Casual", "Relaxed"): ["Beige Cardigan + Light Jeans + White Sneakers"],
-        ("Seasonal", "Sophisticated"): ["Brown Coat + Dark Jeans + Scarf"],
-        ("Professional", "Energetic"): ["Blue Suit + White Shirt + Red Tie"],
-        ("Casual", "Energetic"): ["Bright Hoodie + Joggers + Sneakers"],
-        ("Seasonal", "Confident"): ["Trench Coat + Black Pants + Boots"]
+        ("Professional", "Confident"): ["Navy Blazer + Gray Slacks + White Shirt + Leather Shoes"],
+        ("Casual", "Relaxed"): ["Beige Cardigan + Light Jeans + White Sneakers + Watch"],
+        ("Seasonal", "Sophisticated"): ["Brown Coat + Dark Jeans + Scarf + Boots"],
+        ("Professional", "Energetic"): ["Blue Suit + White Shirt + Red Tie + Dress Shoes"],
+        ("Casual", "Energetic"): ["Bright Hoodie + Joggers + Sneakers + Baseball Cap"],
+        ("Seasonal", "Confident"): ["Trench Coat + Black Pants + Boots + Minimalist Jewelry"]
     }
-    return style_recommendations.get((theme, mood), ["No specific recommendations available"])
+    
+    # Basic suggestion based on theme and mood
+    suggestions = style_recommendations.get((theme, mood), ["No specific recommendations available"])
+
+    # Incorporate closet items if provided
+    if closet_items:
+        for i, item in enumerate(closet_items):
+            suggestions.append(f"Outfit {i+1}: Use your uploaded item {i+1} with a matching accessory or layer.")
+    
+    return suggestions
 
 # Show outfit suggestions based on theme and mood
-suggested_outfits = outfit_suggestions(theme, mood)
+suggested_outfits = outfit_suggestions(theme, mood, closet_files)
 st.write("Suggested Outfits:")
 for outfit in suggested_outfits:
     st.write(f"- {outfit}")
@@ -133,6 +143,13 @@ if st.session_state.saved_outfits:
     st.write("Saved Outfit Combinations:")
     for saved_outfit in st.session_state.saved_outfits:
         st.write(f"- {saved_outfit}")
+
+# Accessories and footwear example suggestions for professional style
+if theme == "Professional":
+    st.write("Consider adding:")
+    st.write("- Leather belt")
+    st.write("- Silver watch")
+    st.write("- Dress shoes or loafers")
 
 # Optional weather-based recommendations
 def weather_based_outfit_recommendation():
