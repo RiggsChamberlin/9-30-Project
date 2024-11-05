@@ -186,4 +186,17 @@ if user_consent:
                 weather_data = requests.get(f"http://api.openweathermap.org/data/2.5/weather?q={location}&appid=YOUR_API_KEY&units=metric").json()
                 weather = weather_data['weather'][0]['description']
                 temp = weather_data['main']['temp']
-                if temp < 
+                if temp < 10:
+                    suggestion = "Wear warm layers with a coat or jacket."
+                elif temp < 20:
+                    suggestion = "A light sweater or jacket should be comfortable."
+                else:
+                    suggestion = "Light and breathable clothing is recommended."
+                st.write(f"Weather in {location}: {weather}, {temp}°C")
+                st.write(suggestion)
+            except:
+                st.write("Unable to fetch weather data. Check your internet connection or try again.")
+
+    weather_based_outfit_recommendation()
+else:
+    st.warning("Please consent to allow your information to be used before continuing.")
