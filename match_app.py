@@ -4,11 +4,12 @@ from PIL import Image
 import numpy as np
 import requests
 
-# Custom CSS to add light and beige tones
+# Custom CSS to add light and beige tones, Font, and Tooltips
 st.markdown("""
     <style>
     .stApp {
         background-color: #f5f5dc; /* light beige background */
+        font-family: "Times New Roman"; /* Set Times New Roman font */
     }
     .css-18e3th9 {  /* header color */
         color: #4b3832;
@@ -20,6 +21,31 @@ st.markdown("""
     .css-1f6l7sv {  /* text input background */
         background-color: #faf0e6; /* linen color */
     }
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 150px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 5px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%; 
+        left: 50%;
+        margin-left: -75px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -27,18 +53,34 @@ st.markdown("""
 st.title("Style Me")
 st.write("Upload photos of your outfits to check if the colors match. If they don’t, we’ll suggest better combinations.")
 
-# Pop-up notification for consent
+# Consent with Privacy Details
 st.write("We value your privacy and handle your information responsibly.")
 user_consent = st.checkbox("I agree to allow my information to be used for personalization.")
+if not user_consent:
+    st.warning("Please consent to allow your information to be used before continuing.")
 
+# Only continue if the user gives consent
 if user_consent:
-    # Original file upload inputs for primary outfit photos
-    file1 = st.file_uploader("Upload the first outfit photo", type=["jpg", "jpeg", "png"])
-    file2 = st.file_uploader("Upload the second outfit photo", type=["jpg", "jpeg", "png"])
 
-    # Expanded User-selectable theme and mood for outfit suggestions
-    theme = st.selectbox("Choose your outfit theme", ["Professional", "Casual", "Seasonal", "Business Casual", "Smart Casual", "Formal", "Sporty", "Bohemian"])
-    mood = st.selectbox("Choose your mood", ["Confident", "Relaxed", "Energetic", "Sophisticated", "Chill", "Bold", "Creative", "Minimalistic"])
+    # Step-by-Step Guide / Onboarding
+    st.subheader("Welcome to Style Me! Here’s how it works:")
+    st.write("1. Upload photos of your outfits.\n"
+             "2. Choose a theme and mood to get personalized suggestions.\n"
+             "3. Check color compatibility and get outfit ideas based on the current weather.\n"
+             "4. Save outfits for later or plan them for future occasions.")
+
+    # Original file upload inputs for primary outfit photos with Drag-and-Drop
+    file1 = st.file_uploader("Upload the first outfit photo", type=["jpg", "jpeg", "png"], accept_multiple_files=False)
+    file2 = st.file_uploader("Upload the second outfit photo", type=["jpg", "jpeg", "png"], accept_multiple_files=False)
+
+    # Expanded User-selectable theme and mood for outfit suggestions with Tooltips
+    theme_tooltip = '<div class="tooltip">Choose your outfit theme <span class="tooltiptext">Pick a style like Casual or Business Casual</span></div>'
+    st.markdown(theme_tooltip, unsafe_allow_html=True)
+    theme = st.selectbox("", ["Professional", "Casual", "Seasonal", "Business Casual", "Smart Casual", "Formal", "Sporty", "Bohemian"])
+
+    mood_tooltip = '<div class="tooltip">Choose your mood <span class="tooltiptext">Mood can influence color choices</span></div>'
+    st.markdown(mood_tooltip, unsafe_allow_html=True)
+    mood = st.selectbox("", ["Confident", "Relaxed", "Energetic", "Sophisticated", "Chill", "Bold", "Creative", "Minimalistic"])
 
     # Optional face photo for skin tone detection
     face_file = st.file_uploader("Upload a face photo (optional, for color suggestions based on skin tone)", type=["jpg", "jpeg", "png"])
