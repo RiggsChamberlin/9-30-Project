@@ -47,12 +47,20 @@ if color_blind_mode:
     """, unsafe_allow_html=True)
     st.write("Color Blind Mode is enabled for better accessibility.")
 
-# User consent check
-user_consent = st.checkbox("I agree to allow my information to be used for personalization.")
-if not user_consent:
-    st.warning("Please consent to allow your information to be used before continuing.")
+# User consent with session state to show it only once
+if "user_consent" not in st.session_state:
+    st.session_state.user_consent = False
 
-if user_consent:
+if not st.session_state.user_consent:
+    user_consent = st.checkbox("I agree to allow my information to be used for personalization.")
+    if user_consent:
+        st.session_state.user_consent = True
+else:
+    st.write("Thank you for consenting to allow your information to be used.")
+
+if not st.session_state.user_consent:
+    st.warning("Please consent to allow your information to be used before continuing.")
+else:
     # Step-by-Step Guide / Onboarding
     st.subheader("Welcome to Style Me! Here’s how it works:")
     st.write("1. Upload photos of your outfits.\n"
@@ -80,14 +88,23 @@ if user_consent:
 
     # Function to analyze primary color in an image
     def get_dominant_color(image, k=1):
+        """
+        Get the dominant color of an image by applying k-means clustering.
+        Focuses on identifying the primary color, ignoring patterns and textures.
+        """
         data = image.reshape((-1, 3))
         data = np.float32(data)
-        _, labels, centers = cv2.kmeans(data, k, None, (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0), 10, cv2.KMEANS_RANDOM_CENTERS)
+        _, labels, centers = cv2.kmeans(data, k, None, 
+                                        (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0), 
+                                        10, cv2.KMEANS_RANDOM_CENTERS)
         dominant_color = centers[0].astype(int)
         return tuple(dominant_color)
 
     # Function to check color harmony based on basic color theory
     def check_color_match(dominant_color):
+        """
+        Determine if colors are compatible using color harmony rules.
+        """
         color_suggestions = {
             "Blue": ["White", "Gray", "Beige"],
             "Red": ["Black", "White", "Navy"],
@@ -155,7 +172,6 @@ if user_consent:
 
     # Expanded outfit database with new themes and moods
     def outfit_suggestions(theme, mood, closet_items=None):
-        # Sample outfit database
         style_recommendations = {
             ("Professional", "Confident"): ["Navy Blazer + Gray Slacks + White Shirt + Leather Shoes"],
             ("Casual", "Relaxed"): ["Beige Cardigan + Light Jeans + White Sneakers + Watch"],
@@ -167,51 +183,19 @@ if user_consent:
             ("Bohemian", "Creative"): ["Patterned Top + Loose Pants + Sandals + Layered Jewelry"]
         }
         
-        # Basic suggestion based on theme and mood
         suggestions = style_recommendations.get((theme, mood), ["No specific recommendations available"])
-
-        # Incorporate closet items if provided
         if closet_items:
             for i, item in enumerate(closet_items):
-                suggestions.append(f"Outfit {i+1}: Use your uploaded item {i+1} with a matching accessory or layer.")
-        
-        return suggestions
-
-    # Show outfit suggestions based on theme and mood
-    suggested_outfits = outfit_suggestions(theme, mood, closet_files)
-    st.write("Suggested Outfits:")
-    for outfit in suggested_outfits:
-        st.write(f"- {outfit}")
-
-    # Display saved outfits
-    if "saved_outfits" not in st.session_state:
-        st.session_state.saved_outfits = []
-
-    # Button to save the outfit combination
-    if st.button("Save this outfit suggestion"):
-        st.session_state.saved_outfits.extend(suggested_outfits)
-        st.success("Outfit saved!")
-
-    # Display saved outfits if available
-    if st.session_state.saved_outfits:
-        st.write("Saved Outfit Combinations:")
-        for saved_outfit in st.session_state.saved_outfits:
-            st.write(f"- {saved_outfit}")
-
-    # Accessories and footwear example suggestions for professional style
-    if theme == "Professional":
-        st.write("Consider adding:")
-        st.write("- Leather belt")
-        st.write("- Silver watch")
-        st.write("- Dress shoes or loafers")
+                suggestions.append(f"Outfit {i+1}: Use your uploaded item")
 
     # In-App Shopping Recommendations
     def shopping_recommendations():
-        st.write("👗 **Suggested Shopping Upgrades**:")
-        st.write("- [Stylish Black Blazer](https://example.com/black-blazer)")
-        st.write("- [White Sneakers](https://example.com/white-sneakers)")
-        st.write("- [Classic Leather Belt](https://example.com/leather-belt)")
-        st.write("- [Elegant Gold Watch](https://example.com/gold-watch)")
+        st.write("👗 **Suggested Shopping Upgrades from Popular Stores**:")
+        st.write("- [Zara](https://www.zara.com)")
+        st.write("- [Abercrombie & Fitch](https://www.abercrombie.com)")
+        st.write("- [Uniqlo](https://www.uniqlo.com)")
+        st.write("- [H&M](https://www2.hm.com)")
+        st.write("- [Nordstrom](https://www.nordstrom.com)")
 
     shopping_recommendations()
 
@@ -236,5 +220,3 @@ if user_consent:
                 st.write("Unable to fetch weather data. Check your internet connection or try again.")
 
     weather_based_outfit_recommendation()
-else:
-    st.warning("Please consent to allow your information to be used before continuing.")
