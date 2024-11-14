@@ -297,20 +297,20 @@ else:
                 weather = weather_data['weather'][0]['description']
                 temp = weather_data['main']['temp']
                 if temp < 10:
-                    suggestion = "Wear warm layers with a coat or jacket." if language == "English" else 
-                                 "Use camadas quentes com um casaco." if language == "Portuguese" else 
-                                 "Portez des couches chaudes avec un manteau." if language == "French" else 
-                                 "Use capas calientes con un abrigo."
+                    suggestion = ("Wear warm layers with a coat or jacket." if language == "English" else
+                                  "Use camadas quentes com um casaco." if language == "Portuguese" else
+                                  "Portez des couches chaudes avec un manteau." if language == "French" else
+                                  "Use capas calientes con un abrigo.")
                 elif temp < 20:
-                    suggestion = "A light sweater or jacket should be comfortable." if language == "English" else 
-                                 "Um suéter leve ou jaqueta deve ser confortável." if language == "Portuguese" else 
-                                 "Un pull léger ou une veste devrait être confortable." if language == "French" else 
-                                 "Un suéter ligero o una chaqueta debería ser cómodo."
+                    suggestion = ("A light sweater or jacket should be comfortable." if language == "English" else
+                                  "Um suéter leve ou jaqueta deve ser confortável." if language == "Portuguese" else
+                                  "Un pull léger ou une veste devrait être confortable." if language == "French" else
+                                  "Un suéter ligero o una chaqueta debería ser cómodo.")
                 else:
-                    suggestion = "Light and breathable clothing is recommended." if language == "English" else 
-                                 "Roupas leves e respiráveis são recomendadas." if language == "Portuguese" else 
-                                 "Des vêtements légers et respirants sont recommandés." if language == "French" else 
-                                 "Se recomienda ropa ligera y transpirable."
+                    suggestion = ("Light and breathable clothing is recommended." if language == "English" else
+                                  "Roupas leves e respiráveis são recomendadas." if language == "Portuguese" else
+                                  "Des vêtements légers et respirants sont recommandés." if language == "French" else
+                                  "Se recomienda ropa ligera y transpirable.")
                 st.write(f"Weather in {location}: {weather}, {temp}°C")
                 st.write(suggestion)
             except:
