@@ -1,0 +1,59 @@
+import streamlit as st
+
+# Function to configure and set the styling options for the Streamlit app
+def set_styling(background_color="#f5f5dc", font_family="Times New Roman", header_color="#4b3832", 
+                button_background_color="#e1c699", button_text_color="#4b3832", text_input_background="#faf0e6",
+                text_color="#333333", text_size="16px"):
+    """
+    Function to set the custom styling for the Streamlit app.
+
+    Parameters:
+    - background_color (str): The background color for the entire app.
+    - font_family (str): Font family for the entire app.
+    - header_color (str): The color for the headers.
+    - button_background_color (str): The background color for buttons.
+    - button_text_color (str): The text color for buttons.
+    - text_input_background (str): The background color for text input fields.
+    - text_color (str): The default text color for general content.
+    - text_size (str): The size of the text for general content.
+    """
+    st.markdown(f"""
+        <style>
+        .stApp {{
+            background-color: {background_color};
+            font-family: '{font_family}';
+            color: {text_color};
+            font-size: {text_size};
+        }}
+        .css-18e3th9 {{  /* Header color */
+            color: {header_color};
+        }}
+        .css-1d391kg {{  /* Button styling */
+            background-color: {button_background_color};
+            color: {button_text_color};
+        }}
+        .css-1f6l7sv {{  /* Text input background */
+            background-color: {text_input_background};
+        }}
+        </style>
+    """, unsafe_allow_html=True)
+
+# Example Usage
+if __name__ == "__main__":
+    # Call this function at the beginning of your Streamlit app to set the styling
+    set_styling(
+        background_color="#ffffff",  # Set your desired background color
+        font_family="Arial",  # Set your desired font family
+        header_color="#2e4053",  # Set your desired header color
+        button_background_color="#85c1e9",  # Set button background color
+        button_text_color="#ffffff",  # Set button text color
+        text_input_background="#d5dbdb",  # Set text input background color
+        text_color="#333333",  # Set the default text color
+        text_size="18px"  # Set the default text size
+    )
+
+    # Adding sample content to show the applied styles
+    st.title("Style Configuration Test")
+    st.write("This is an example of how the styling configurations apply to the Streamlit app.")
+    st.button("Example Button")
+    st.text_input("Example Text Input")
